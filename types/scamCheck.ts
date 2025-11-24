@@ -67,8 +67,10 @@ export interface ScamCheckError {
  * Configuration for AI providers
  */
 export interface AIProviderConfig {
-  provider: "openai" | "mistral" | "nemotron" | "mock";
+  provider: "openai" | "mistral" | "nemotron" | "openrouter" | "mock";
   apiKey?: string;
   model?: string;
   endpoint?: string;
+  siteUrl?: string; // Optional for OpenRouter ranking
+  siteName?: string; // Optional for OpenRouter ranking
 }

@@ -23,11 +23,15 @@ function getProviderConfig(): AIProviderConfig {
     provider,
     apiKey: process.env.OPENAI_API_KEY ||
             process.env.MISTRAL_API_KEY ||
+            process.env.OPENROUTER_API_KEY ||
             process.env.CUSTOM_AI_API_KEY,
     model: process.env.OPENAI_MODEL ||
            process.env.MISTRAL_MODEL ||
+           process.env.OPENROUTER_MODEL ||
            process.env.CUSTOM_AI_MODEL,
     endpoint: process.env.CUSTOM_AI_ENDPOINT,
+    siteUrl: process.env.SITE_URL,
+    siteName: process.env.SITE_NAME || "Scam Shield",
   };
 }
 
@@ -244,6 +248,81 @@ async function mistralAnalyzeScam(
 }
 
 /**
+ * OpenRouter implementation
+ * Supports multiple models through a unified API
+ */
+async function openRouterAnalyzeScam(
+  input: ScamCheckInput,
+  config: AIProviderConfig
+): Promise<ScamCheckResult> {
+  if (!config.apiKey) {
+    throw new Error("OpenRouter API key not configured");
+  }
+
+  // Default to Claude 3.5 Sonnet (excellent for reasoning tasks)
+  const model = config.model || "anthropic/claude-3.5-sonnet";
+  const userPrompt = generateUserPrompt(
+    input.text,
+    input.contextWhoFor || "self",
+    !!input.imageBase64
+  );
+
+  const messages: any[] = [
+    { role: "system", content: SYSTEM_PROMPT },
+    { role: "user", content: userPrompt }
+  ];
+
+  // If image is provided, add it to the message
+  if (input.imageBase64) {
+    messages[1] = {
+      role: "user",
+      content: [
+        { type: "text", text: userPrompt },
+        {
+          type: "image_url",
+          image_url: {
+            url: `data:image/jpeg;base64,${input.imageBase64}`
+          }
+        }
+      ]
+    };
+  }
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${config.apiKey}`,
+    "HTTP-Referer": config.siteUrl || "https://scamshield.app",
+    "X-Title": config.siteName || "Scam Shield",
+  };
+
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.3,
+      max_tokens: 2000,
+      response_format: { type: "json_object" },
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`OpenRouter API error: ${response.status} - ${error}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices[0]?.message?.content;
+
+  if (!content) {
+    throw new Error("No response from OpenRouter");
+  }
+
+  return parseAIResponse(content);
+}
+
+/**
  * Custom endpoint (Nemotron/vLLM) implementation
  */
 async function customAnalyzeScam(
@@ -342,6 +421,9 @@ export async function analyzeScam(
 
       case "mistral":
         return await mistralAnalyzeScam(input, config);
+
+      case "openrouter":
+        return await openRouterAnalyzeScam(input, config);
 
       case "nemotron":
         return await customAnalyzeScam(input, config);

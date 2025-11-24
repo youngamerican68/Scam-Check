@@ -56,6 +56,21 @@ Scam-Check One-Shot is an MVP web application that helps non-technical users (es
    AI_PROVIDER=mock
    ```
 
+   **For OpenRouter (Recommended - Best Value):**
+   ```env
+   AI_PROVIDER=openrouter
+   OPENROUTER_API_KEY=your_api_key_here
+   OPENROUTER_MODEL=anthropic/claude-3.5-sonnet
+   ```
+
+   OpenRouter gives you access to 100+ models through one API:
+   - **Claude 3.5 Sonnet**: Best reasoning ($3/$15 per 1M tokens)
+   - **Llama 3.1 70B**: Cost-effective ($0.35/$0.40 per 1M tokens)
+   - **Gemini Flash 1.5**: Fastest ($0.075/$0.30 per 1M tokens)
+   - **GPT-4o**: Versatile ($2.50/$10 per 1M tokens)
+
+   Sign up at [openrouter.ai](https://openrouter.ai) for $5 credit
+
    **For OpenAI:**
    ```env
    AI_PROVIDER=openai
