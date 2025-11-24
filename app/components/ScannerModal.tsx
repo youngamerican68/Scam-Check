@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { X, Upload, ShieldCheck, AlertTriangle, CheckCircle, Loader2, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSession, signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { ScanStatus, ThreatLevel, ScanResult } from '@/types/scannerModal';
 
 interface ScannerModalProps {
@@ -9,6 +11,8 @@ interface ScannerModalProps {
 }
 
 export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose }) => {
+  const { data: session, status: sessionStatus } = useSession();
+  const router = useRouter();
   const [text, setText] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<ScanStatus>(ScanStatus.IDLE);
@@ -29,6 +33,12 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose }) =
   };
 
   const handleScan = async () => {
+    // Check if user is logged in
+    if (!session) {
+      signIn();
+      return;
+    }
+
     if (!text && !file) return;
 
     setStatus(ScanStatus.ANALYZING);
@@ -71,6 +81,24 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose }) =
 
       if (!response.ok) {
         const errorData = await response.json();
+
+        // Handle specific error cases
+        if (errorData.error === 'LIMIT_REACHED') {
+          setStatus(ScanStatus.ERROR);
+          const upgrade = window.confirm(
+            `You've used all 5 free checks this month.\n\nUpgrade to Premium for unlimited checks at just $9.99/month?\n\nClick OK to see pricing.`
+          );
+          if (upgrade) {
+            router.push('/pricing');
+          }
+          return;
+        }
+
+        if (errorData.error === 'UNAUTHORIZED') {
+          signIn();
+          return;
+        }
+
         throw new Error(errorData.message || `Backend Error: ${response.status} ${response.statusText}`);
       }
 

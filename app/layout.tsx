@@ -1,6 +1,7 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { SessionProvider } from "./components/SessionProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,12 +19,12 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Scam-Check One-Shot | The Granny Guard",
-  description: "A second opinion for your panic. Antivirus for social engineering. Check suspicious messages for scam indicators.",
+  title: "Scam Shield | Protect Yourself from Scams",
+  description: "A second opinion for your panic. Antivirus for social engineering. Check suspicious messages for scam indicators with AI-powered analysis.",
   keywords: ["scam check", "fraud detection", "phishing", "social engineering", "elderly protection", "scam protection"],
-  authors: [{ name: "Scam-Check Team" }],
+  authors: [{ name: "Scam Shield Team" }],
   viewport: "width=device-width, initial-scale=1",
-  themeColor: "#2563eb",
+  themeColor: "#059669",
 };
 
 export default function RootLayout({
@@ -34,7 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-cream`}>
-        {children}
+        <SessionProvider>
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );
