@@ -2,9 +2,12 @@
 // API endpoint for scam checking
 
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { analyzeScam } from "@/lib/aiClient";
 import { validateScamCheckInput, ValidationError, detectSensitiveData } from "@/lib/validation";
 import { ScamCheckInput, ScamCheckResult, ScamCheckError } from "@/types/scamCheck";
+import { hasReachedLimit, trackCheck, getRemainingChecks } from "@/lib/usage";
 
 /**
  * POST /api/check-scam
@@ -12,6 +15,33 @@ import { ScamCheckInput, ScamCheckResult, ScamCheckError } from "@/types/scamChe
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        { error: "UNAUTHORIZED", message: "Please sign in to use scam checking" } as ScamCheckError,
+        { status: 401 }
+      );
+    }
+
+    const userEmail = session.user.email;
+
+    // Check usage limits
+    const limitReached = await hasReachedLimit(userEmail);
+
+    if (limitReached) {
+      const remaining = await getRemainingChecks(userEmail);
+      return NextResponse.json(
+        {
+          error: "LIMIT_REACHED",
+          message: `You've used all 5 free checks this month. Upgrade to premium for unlimited checks.`,
+          remaining: 0,
+        } as ScamCheckError,
+        { status: 402 } // Payment Required
+      );
+    }
+
     // Parse request body
     const body = await request.json();
 
@@ -52,6 +82,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Track usage
+    await trackCheck(userEmail);
+
     // Log the analysis (in production, you'd use proper logging)
     console.log("Scam check completed:", {
       verdict: result.verdict,
@@ -59,11 +92,21 @@ export async function POST(request: NextRequest) {
       contextWhoFor: validatedInput.contextWhoFor,
       hasImage: !!validatedInput.imageBase64,
       textLength: validatedInput.text.length,
+      userEmail,
       timestamp: new Date().toISOString(),
     });
 
-    // Return result
-    return NextResponse.json(result, { status: 200 });
+    // Get remaining checks for response
+    const remaining = await getRemainingChecks(userEmail);
+
+    // Return result with usage info
+    return NextResponse.json(
+      {
+        ...result,
+        checksRemaining: remaining,
+      },
+      { status: 200 }
+    );
 
   } catch (error) {
     console.error("Unexpected error in check-scam endpoint:", error);
