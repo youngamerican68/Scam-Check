@@ -7,7 +7,29 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"Inter"', 'sans-serif'], // Maximum readability
+        serif: ['"Playfair Display"', 'serif'], // Authority
+      },
       colors: {
+        cream: '#FAFAF9', // Stone-50 (Background)
+        paper: '#FFFFFF', // Cards
+        ink: '#1C1917',   // Stone-900 (Text)
+        rust: {
+          50: '#FFF7ED',
+          100: '#FFEDD5',
+          500: '#F97316',
+          600: '#EA580C',
+          700: '#C2410C',
+        },
+        emerald: {
+          50: '#ECFDF5',
+          100: '#D1FAE5',
+          600: '#059669', // The "Safe" Green
+          700: '#047857',
+          800: '#065F46',
+        },
+        // Keep existing colors for backwards compatibility
         danger: {
           50: '#fef2f2',
           100: '#fee2e2',
