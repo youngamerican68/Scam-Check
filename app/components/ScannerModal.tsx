@@ -33,11 +33,12 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose }) =
   };
 
   const handleScan = async () => {
+    // TEMPORARILY DISABLED FOR TESTING - Re-enable after Google OAuth setup
     // Check if user is logged in
-    if (!session) {
-      signIn();
-      return;
-    }
+    // if (!session) {
+    //   signIn();
+    //   return;
+    // }
 
     if (!text && !file) return;
 

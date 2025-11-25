@@ -15,32 +15,33 @@ import { hasReachedLimit, trackCheck, getRemainingChecks } from "@/lib/usage";
  */
 export async function POST(request: NextRequest) {
   try {
+    // TEMPORARILY DISABLED FOR TESTING - Re-enable after Google OAuth setup
     // Check authentication
-    const session = await getServerSession(authOptions);
+    // const session = await getServerSession(authOptions);
 
-    if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: "UNAUTHORIZED", message: "Please sign in to use scam checking" } as ScamCheckError,
-        { status: 401 }
-      );
-    }
+    // if (!session?.user?.email) {
+    //   return NextResponse.json(
+    //     { error: "UNAUTHORIZED", message: "Please sign in to use scam checking" } as ScamCheckError,
+    //     { status: 401 }
+    //   );
+    // }
 
-    const userEmail = session.user.email;
+    // const userEmail = session.user.email;
 
-    // Check usage limits
-    const limitReached = await hasReachedLimit(userEmail);
+    // // Check usage limits
+    // const limitReached = await hasReachedLimit(userEmail);
 
-    if (limitReached) {
-      const remaining = await getRemainingChecks(userEmail);
-      return NextResponse.json(
-        {
-          error: "LIMIT_REACHED",
-          message: `You've used all 5 free checks this month. Upgrade to premium for unlimited checks.`,
-          remaining: 0,
-        } as ScamCheckError,
-        { status: 402 } // Payment Required
-      );
-    }
+    // if (limitReached) {
+    //   const remaining = await getRemainingChecks(userEmail);
+    //   return NextResponse.json(
+    //     {
+    //       error: "LIMIT_REACHED",
+    //       message: `You've used all 5 free checks this month. Upgrade to premium for unlimited checks.`,
+    //       remaining: 0,
+    //     } as ScamCheckError,
+    //     { status: 402 } // Payment Required
+    //   );
+    // }
 
     // Parse request body
     const body = await request.json();
@@ -82,8 +83,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // TEMPORARILY DISABLED FOR TESTING
     // Track usage
-    await trackCheck(userEmail);
+    // await trackCheck(userEmail);
 
     // Log the analysis (in production, you'd use proper logging)
     console.log("Scam check completed:", {
@@ -92,18 +94,19 @@ export async function POST(request: NextRequest) {
       contextWhoFor: validatedInput.contextWhoFor,
       hasImage: !!validatedInput.imageBase64,
       textLength: validatedInput.text.length,
-      userEmail,
+      // userEmail,
       timestamp: new Date().toISOString(),
     });
 
+    // TEMPORARILY DISABLED FOR TESTING
     // Get remaining checks for response
-    const remaining = await getRemainingChecks(userEmail);
+    // const remaining = await getRemainingChecks(userEmail);
 
-    // Return result with usage info
+    // Return result (without usage info for testing)
     return NextResponse.json(
       {
         ...result,
-        checksRemaining: remaining,
+        // checksRemaining: remaining,
       },
       { status: 200 }
     );

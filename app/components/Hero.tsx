@@ -69,7 +69,7 @@ export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => 
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative hidden lg:block"
           >
-            <div className="relative bg-white rounded-3xl shadow-2xl shadow-stone-900/10 border border-stone-100 p-8 transform rotate-1 hover:rotate-0 transition-transform duration-500">
+            <div className="relative bg-white rounded-3xl shadow-2xl shadow-stone-900/10 border border-stone-100 p-8">
               {/* Card Title */}
               <div className="text-center border-b border-stone-100 pb-6 mb-6">
                 <h3 className="text-2xl font-serif font-bold text-ink">See how it works</h3>
