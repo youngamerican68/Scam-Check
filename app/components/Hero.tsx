@@ -31,8 +31,13 @@ export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => 
             </h1>
 
             {/* Subhead - Plain English */}
-            <p className="text-xl text-ink/80 leading-relaxed mb-10 font-medium max-w-lg">
-              Not sure if a text or email is real? Paste it here. We will check it for scams instantly.
+            <p className="text-xl text-ink/80 leading-relaxed mb-4 font-medium max-w-lg">
+              Not sure if a text or email is real? Paste it here and we'll tell you if it looks risky—before you click.
+            </p>
+
+            {/* AI Clarification */}
+            <p className="text-base text-emerald-700 font-bold mb-10 max-w-lg">
+              Instant AI scan powered by Claude – results in under 10 seconds
             </p>
 
             {/* MOCK INPUT / CTA AREA */}
@@ -47,18 +52,23 @@ export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => 
                     Paste suspicious text here...
                   </span>
                 </div>
-                <button 
+                <button
                   className="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-md transition-all transform active:scale-95 flex-shrink-0"
                 >
-                  Check Now
+                  Scan Message for Scams
                 </button>
               </div>
               
               {/* Trust Microcopy */}
-              <p className="pl-2 pt-4 text-sm font-bold text-ink/60 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-emerald-600" />
-                No login required. 100% Anonymous.
-              </p>
+              <div className="pl-2 pt-4 space-y-2">
+                <p className="text-sm font-bold text-ink/60 flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-emerald-600" />
+                  No login required. 100% Anonymous.
+                </p>
+                <p className="text-xs text-stone-500 italic">
+                  Tip: Remove personal details before pasting if you prefer
+                </p>
+              </div>
             </div>
           </motion.div>
 
@@ -72,7 +82,8 @@ export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => 
             <div className="relative bg-white rounded-3xl shadow-2xl shadow-stone-900/10 border border-stone-100 p-8">
               {/* Card Title */}
               <div className="text-center border-b border-stone-100 pb-6 mb-6">
-                <h3 className="text-2xl font-serif font-bold text-ink">See how it works</h3>
+                <h3 className="text-2xl font-serif font-bold text-ink">Example Result</h3>
+                <p className="text-sm text-stone-500 mt-1">What you'll see in seconds</p>
               </div>
 
               <div className="space-y-6">
