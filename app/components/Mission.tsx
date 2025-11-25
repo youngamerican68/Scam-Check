@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scale, TrendingDown, Users } from 'lucide-react';
+import { TrendingDown, Users } from 'lucide-react';
 
 export const Mission: React.FC = () => {
   return (
@@ -22,21 +22,11 @@ export const Mission: React.FC = () => {
 
          <div className="h-px bg-stone-200 my-12"></div>
 
-         {/* Mission Statement */}
+         {/* Simplified Mission - Who It's For */}
          <div className="text-center">
-           <div className="inline-flex items-center justify-center p-4 bg-stone-50 rounded-full mb-6">
-              <Scale className="w-8 h-8 text-stone-400" />
-           </div>
-
-           <h2 className="text-3xl md:text-4xl font-serif font-bold text-ink mb-6 leading-tight">
-             Bridging the Gap
+           <h2 className="text-2xl md:text-3xl font-serif font-bold text-ink mb-6 leading-tight">
+             Built for peace of mind
            </h2>
-
-           <p className="text-xl text-stone-600 leading-relaxed font-medium mb-8">
-             Research shows there is a gap between "jailbreaking" studies and understanding the real-world harm to seniors.
-             <br className="hidden md:block" />
-             We built <span className="text-emerald-700 font-bold">Scam Shield</span> to fill that gap—providing an end-to-end defense layer that works instantly, without technical jargon.
-           </p>
 
            {/* Who It's For */}
            <div className="inline-flex items-center gap-3 bg-emerald-50 px-6 py-4 rounded-xl border border-emerald-100">

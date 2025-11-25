@@ -58,7 +58,7 @@ export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => 
               <div className="pl-2 pt-4 space-y-2">
                 <p className="text-sm font-bold text-ink/60 flex items-center gap-2">
                   <Lock className="w-4 h-4 text-emerald-600" />
-                  No login required. 100% Anonymous.
+                  <span className="text-emerald-700">Free and instant.</span> No sign-up required.
                 </p>
                 <p className="text-xs text-stone-600 font-medium">
                   <span className="font-bold">We don't store your message.</span> Remove personal details if you'd like extra privacy.
@@ -100,13 +100,16 @@ export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => 
                   </div>
                 </div>
 
-                {/* Example Solution */}
+                {/* Example Solution with Color-Coded Verdict Badge */}
                 <div className="flex gap-4">
                    <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
                       <ShieldCheck className="w-6 h-6 text-emerald-600" />
                    </div>
                    <div className="bg-emerald-50 p-5 rounded-2xl rounded-tl-none border border-emerald-100 w-full">
-                      <p className="font-bold text-emerald-800 text-sm mb-1 uppercase tracking-wider">Our Advice</p>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="inline-block px-3 py-1 bg-red-600 text-white text-xs font-bold uppercase rounded-full tracking-wider">⚠ Suspicious</span>
+                        <span className="text-xs text-stone-500">— High Risk Detected</span>
+                      </div>
                       <p className="text-stone-800 font-medium">
                         <span className="font-bold text-emerald-700">Do not reply.</span> This is a common "Grandparent Scam" trying to panic you.
                       </p>
