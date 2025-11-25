@@ -14,7 +14,10 @@ export const Mission: React.FC = () => {
 
            <h3 className="text-6xl md:text-7xl font-serif font-bold text-red-600 mb-4">$10 Billion</h3>
            <p className="text-xl text-stone-600 font-medium mb-2">lost to online scams in 2023</p>
-           <p className="text-sm text-stone-500">Source: Federal Trade Commission (FTC)</p>
+           <p className="text-sm text-stone-500 mb-4">Source: Federal Trade Commission (FTC)</p>
+           <p className="text-base text-stone-700 italic max-w-2xl mx-auto">
+             Most victims thought the message "looked real enough"—until it was too late.
+           </p>
          </div>
 
          <div className="h-px bg-stone-200 my-12"></div>

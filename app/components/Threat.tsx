@@ -60,19 +60,33 @@ export const Threat: React.FC = () => {
               </div>
             </div>
 
-            {/* Right: The Key Takeaway Visual */}
+            {/* Right: Consequences - Scannable */}
             <div className="bg-stone-100 p-8 md:p-12 flex flex-col justify-center border-t md:border-t-0 md:border-l border-stone-200">
               <blockquote className="text-xl md:text-2xl font-serif text-ink italic leading-relaxed mb-6">
                 "AI can now automate much larger parts of the scam and phishing infrastructure."
               </blockquote>
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-1 bg-emerald-600 rounded-full"></div>
+
+              {/* Consequences List */}
+              <div className="space-y-4 mb-6">
                 <div>
-                   <p className="font-bold text-ink">The Vulnerability Gap</p>
-                   <p className="text-stone-600 text-sm mt-1">
-                     Scammers use tools like ChatGPT (jailbroken) to write perfect English and simulate empathy. Humans need AI defense to fight back.
-                   </p>
+                  <p className="font-bold text-ink text-base">Account takeover</p>
+                  <p className="text-stone-600 text-sm">Attackers gain access to your email or bank</p>
                 </div>
+                <div>
+                  <p className="font-bold text-ink text-base">Data theft</p>
+                  <p className="text-stone-600 text-sm">Your personal info gets harvested and sold</p>
+                </div>
+                <div>
+                  <p className="font-bold text-ink text-base">Malware install</p>
+                  <p className="text-stone-600 text-sm">One click can silently infect your device</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 pt-4 border-t border-stone-200">
+                <div className="h-10 w-1 bg-emerald-600 rounded-full"></div>
+                <p className="text-stone-700 text-sm font-medium">
+                  Humans need AI defense to fight back against AI-powered scams
+                </p>
               </div>
             </div>
 

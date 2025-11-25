@@ -19,18 +19,18 @@ export const Impact: React.FC = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white/5 p-6 rounded-xl border border-white/10">
             <Trash2 className="w-6 h-6 text-emerald-400 mb-3" />
-            <h3 className="font-bold text-white mb-2">We Don't Store Messages</h3>
-            <p className="text-sm text-stone-300">Your messages are analyzed and immediately deleted. Nothing is saved.</p>
+            <h3 className="font-bold text-white mb-2">Never Stored</h3>
+            <p className="text-sm text-stone-300">Messages are <span className="font-bold text-white">analyzed in real-time and never stored</span>. Nothing is saved to our servers.</p>
           </div>
           <div className="bg-white/5 p-6 rounded-xl border border-white/10">
             <Shield className="w-6 h-6 text-emerald-400 mb-3" />
-            <h3 className="font-bold text-white mb-2">No Training Data</h3>
-            <p className="text-sm text-stone-300">We don't use your messages to train AI models. Ever.</p>
+            <h3 className="font-bold text-white mb-2">Never Sold</h3>
+            <p className="text-sm text-stone-300"><span className="font-bold text-white">We never sell your data. Period.</span> No ads, no tracking, no third parties.</p>
           </div>
           <div className="bg-white/5 p-6 rounded-xl border border-white/10">
             <CheckCircle className="w-6 h-6 text-emerald-400 mb-3" />
             <h3 className="font-bold text-white mb-2">Auto-Deleted</h3>
-            <p className="text-sm text-stone-300">Content is automatically erased within minutes after analysis.</p>
+            <p className="text-sm text-stone-300">Content <span className="font-bold text-white">automatically deleted within 5 minutes</span> after analysis completes.</p>
           </div>
         </div>
 

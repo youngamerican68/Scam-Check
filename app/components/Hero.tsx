@@ -30,14 +30,9 @@ export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => 
               Verify Suspicious Messages
             </h1>
 
-            {/* Subhead - Plain English */}
-            <p className="text-xl text-ink/80 leading-relaxed mb-4 font-medium max-w-lg">
-              Not sure if a text or email is real? Paste it here and we'll tell you if it looks risky—before you click.
-            </p>
-
-            {/* AI Clarification */}
-            <p className="text-base text-emerald-700 font-bold mb-10 max-w-lg">
-              Instant AI scan powered by Claude – results in under 10 seconds
+            {/* Subhead - Plain English with integrated AI explanation */}
+            <p className="text-xl text-ink/80 leading-relaxed mb-10 font-medium max-w-lg">
+              Not sure if a text or email is real? Paste it here for an <span className="text-emerald-700 font-bold">instant AI-powered scan</span> against scams, phishing, and red flags. <span className="text-emerald-700 font-bold">Results in seconds.</span>
             </p>
 
             {/* MOCK INPUT / CTA AREA */}
@@ -65,8 +60,8 @@ export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => 
                   <Lock className="w-4 h-4 text-emerald-600" />
                   No login required. 100% Anonymous.
                 </p>
-                <p className="text-xs text-stone-500 italic">
-                  Tip: Remove personal details before pasting if you prefer
+                <p className="text-xs text-stone-600 font-medium">
+                  <span className="font-bold">We don't store your message.</span> Remove personal details if you'd like extra privacy.
                 </p>
               </div>
             </div>
@@ -118,8 +113,13 @@ export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => 
                    </div>
                 </div>
               </div>
+
+              {/* Legend */}
+              <p className="text-xs text-stone-500 text-center mt-4">
+                You'll see: a quick verdict, plus why we flagged it
+              </p>
             </div>
-            
+
             {/* Decorative background blob */}
             <div className="absolute inset-0 bg-emerald-600/5 rounded-3xl blur-2xl transform scale-95 translate-y-4 -z-10" />
           </motion.div>

@@ -50,7 +50,10 @@ export default function HomePage() {
           >
             Scan Your Message Now – Free
           </button>
-          <p className="text-sm text-emerald-200 mt-4">
+          <p className="text-sm text-emerald-50 mt-3 font-medium">
+            No sign-up needed. Just paste and check.
+          </p>
+          <p className="text-xs text-emerald-200 mt-2">
             ✓ Analyzed 500+ suspicious messages  •  ✓ Built with cybersecurity experts
           </p>
         </div>
