@@ -98,10 +98,21 @@ export function validateScamCheckInput(
   const contextWhoFor = normalizeContextWhoFor(input.contextWhoFor);
   const imageBase64 = validateImageBase64(input.imageBase64);
 
+  // Validate optional contact fields
+  const fromKnownContact = typeof input.fromKnownContact === 'boolean'
+    ? input.fromKnownContact
+    : undefined;
+
+  const contactName = typeof input.contactName === 'string' && input.contactName.trim().length > 0
+    ? input.contactName.trim().slice(0, 100) // Limit contact name length
+    : undefined;
+
   return {
     text,
     contextWhoFor,
     imageBase64,
+    fromKnownContact,
+    contactName,
   };
 }
 

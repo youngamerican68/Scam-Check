@@ -23,6 +23,7 @@ export default function IndexScreen() {
   // Form state
   const [messageText, setMessageText] = useState('');
   const [contextWhoFor, setContextWhoFor] = useState<ContextWhoFor>('self');
+  const [fromKnownContact, setFromKnownContact] = useState<boolean | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
   // FUTURE: Handle share intent / deep linking
@@ -85,6 +86,7 @@ export default function IndexScreen() {
         text: trimmedText,
         contextWhoFor,
         imageBase64: null, // Image upload can be added in future versions
+        fromKnownContact,
       });
 
       // Navigate to result screen with the analysis result
@@ -237,6 +239,49 @@ export default function IndexScreen() {
           </Text>
         </View>
 
+        {/* Known Contact Selection */}
+        <View style={styles.contactSection}>
+          <Text style={styles.contactLabel}>Is this from a saved contact?</Text>
+          <View style={styles.contactButtons}>
+            <TouchableOpacity
+              style={[
+                styles.contactButton,
+                fromKnownContact === true && styles.contactButtonActiveGreen,
+              ]}
+              onPress={() => setFromKnownContact(true)}
+            >
+              <Text
+                style={[
+                  styles.contactButtonText,
+                  fromKnownContact === true && styles.contactButtonTextActive,
+                ]}
+              >
+                ✓ Yes, saved contact
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.contactButton,
+                fromKnownContact === false && styles.contactButtonActiveRed,
+              ]}
+              onPress={() => setFromKnownContact(false)}
+            >
+              <Text
+                style={[
+                  styles.contactButtonText,
+                  fromKnownContact === false && styles.contactButtonTextActive,
+                ]}
+              >
+                ✗ Unknown number
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.contactHint}>
+            Messages from unknown numbers are more likely to be scams
+          </Text>
+        </View>
+
         {/* Check Button */}
         <PrimaryButton
           label="🔍 Check this for scams"
@@ -375,6 +420,52 @@ const styles = StyleSheet.create({
     color: '#1e40af',
   },
   contextHint: {
+    fontSize: 14,
+    color: '#6b7280',
+    paddingHorizontal: 4,
+  },
+  contactSection: {
+    marginBottom: 24,
+  },
+  contactLabel: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 12,
+  },
+  contactButtons: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
+  },
+  contactButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderWidth: 2,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+  },
+  contactButtonActiveGreen: {
+    borderColor: '#10b981',
+    backgroundColor: '#d1fae5',
+  },
+  contactButtonActiveRed: {
+    borderColor: '#ef4444',
+    backgroundColor: '#fee2e2',
+  },
+  contactButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6b7280',
+    textAlign: 'center',
+  },
+  contactButtonTextActive: {
+    color: '#111827',
+  },
+  contactHint: {
     fontSize: 14,
     color: '#6b7280',
     paddingHorizontal: 4,

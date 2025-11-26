@@ -3,7 +3,7 @@
 **Project:** Scam Shield (The Granny Guard)
 **Goal:** $50-150 MRR in 60 days (10-30 paying families)
 **Timeline:** 2-week MVP sprint
-**Last Updated:** November 24, 2024
+**Last Updated:** November 25, 2024
 
 ---
 
@@ -26,6 +26,8 @@
 - [x] Three-tier verdict system (High Scam / Suspicious / No Obvious Scam)
 - [x] Conservative-by-default analysis
 - [x] Input validation and sanitization
+- [x] **Known contact detection** - Users can indicate if message is from saved contact
+- [x] AI adjusts suspicion level based on contact status
 
 ### 🔄 Authentication (Backend Complete, Frontend Integrated)
 - [x] NextAuth.js setup
@@ -57,16 +59,16 @@
 - [x] Remaining checks display
 - [ ] ⚠️ **BLOCKED:** Vercel KV not yet enabled in dashboard
 
-### ⚠️ AI Provider Integration
+### ✅ AI Provider Integration
 - [x] OpenRouter client implementation
 - [x] Pluggable provider architecture (OpenAI, Mistral, OpenRouter, Mock)
 - [x] Conservative system prompt
 - [x] Image analysis support
 - [x] Structured JSON response parsing
-- [ ] ⚠️ **CRITICAL:** OpenRouter API key not yet configured
-- [ ] ⚠️ **CRITICAL:** Currently using mock AI (keyword matching only)
+- [x] **OpenRouter API key configured** ✅
+- [x] **Real AI (Claude 3.5 Sonnet) now active** ✅
 
-**Status:** Mock AI works but gives dangerous false negatives. **Real AI needed before launch.**
+**Status:** Real AI working! Tested with scam messages successfully.
 
 ---
 
@@ -75,17 +77,17 @@
 ### Environment Configuration (Priority 1)
 - [ ] Generate NEXTAUTH_SECRET (`openssl rand -base64 32`)
 - [ ] Create Google OAuth credentials
-- [ ] Create OpenRouter account and get API key
+- [x] **Create OpenRouter account and get API key** ✅
 - [ ] Create Stripe account
 - [ ] Create Stripe products (Premium $9.99, Family $14.99)
 - [ ] Set up Stripe webhook endpoint
 - [ ] Enable Vercel KV in dashboard
-- [ ] Create `.env.local` with all secrets
+- [x] **Create `.env.local` with all secrets** ✅
 - [ ] Re-enable auth in ScannerModal and check-scam API
 
 ### Testing & Validation (Priority 2)
 - [ ] Test Google OAuth sign-in flow
-- [ ] Test OpenRouter AI analysis with real scam messages
+- [x] **Test OpenRouter AI analysis with real scam messages** ✅
 - [ ] Test Stripe checkout flow
 - [ ] Test Stripe webhook (subscription created/cancelled)
 - [ ] Test usage limits (5 free checks, then paywall)
@@ -116,8 +118,8 @@
 ## 🚧 Known Issues & Technical Debt
 
 ### High Priority (Fix Before Launch)
-1. **Mock AI gives false negatives** - "Grandma, do you know how to use Venmo?" marked as safe
-2. **No real AI configured** - OpenRouter API key needed
+1. ~~**Mock AI gives false negatives**~~ ✅ FIXED - Now using real AI with known contact detection
+2. ~~**No real AI configured**~~ ✅ FIXED - OpenRouter API key configured, Claude 3.5 Sonnet active
 3. **Auth disabled for testing** - Need to re-enable after Google OAuth setup
 4. **No payment processing** - Stripe not configured
 
@@ -141,7 +143,8 @@
 ### What's Working ✅
 - Beautiful, professional landing page
 - Scanner modal with text/image upload
-- Mock scam detection (good for UI testing)
+- **Real AI scam detection (Claude 3.5 Sonnet via OpenRouter)** ✅
+- **Known contact detection** - reduces false positives for messages from saved contacts
 - Full auth backend (NextAuth + Vercel KV)
 - Full payment backend (Stripe checkout + webhooks)
 - Usage tracking and rate limiting logic
@@ -149,10 +152,10 @@
 - Sign-in page
 
 ### What's Blocked ⚠️
-- **Google OAuth** - No client ID/secret yet
-- **OpenRouter AI** - No API key yet (CRITICAL - mock AI not safe for production)
-- **Stripe** - No account/products configured yet
-- **Vercel KV** - Not enabled in dashboard yet
+- **Google OAuth** - No client ID/secret yet (not needed for free MVP)
+- ~~**OpenRouter AI**~~ ✅ DONE
+- **Stripe** - No account/products configured yet (not needed for free MVP)
+- **Vercel KV** - Not enabled in dashboard yet (not needed for free MVP)
 
 ### What's Left 🔨
 1. **Configuration** (2 hours)
@@ -240,6 +243,22 @@
 3. **Tilted UI elements look unprofessional** - Keep it clean and straight
 4. **Auth errors cascade** - Need to set up full env before testing auth
 5. **Conservative bias is critical** - Better to over-warn than under-warn for elderly users
+6. **Known contact context matters** - "Happy birthday grandpa" from a saved contact ≠ same message from unknown number. Added `fromKnownContact` field to reduce false positives.
+
+---
+
+## 📅 Session Log
+
+### November 25, 2024
+- ✅ Configured OpenRouter API key (Claude 3.5 Sonnet)
+- ✅ Created `.env.local` with AI provider settings
+- ✅ Tested real AI with scam messages - working correctly
+- ✅ Added "Known Contact" feature to reduce false positives:
+  - New `fromKnownContact` and `contactName` fields in API
+  - AI prompt updated to adjust suspicion based on contact status
+  - UI toggle added to web scanner modal
+  - UI toggle added to mobile app
+- ✅ Fixed false positive issue ("happy birthday grandpa" from saved contact no longer flagged)
 
 ---
 

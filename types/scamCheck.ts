@@ -29,6 +29,12 @@ export interface ScamCheckInput {
 
   /** Optional base64-encoded image of the message */
   imageBase64?: string | null;
+
+  /** Whether the message is from a known/saved contact */
+  fromKnownContact?: boolean;
+
+  /** Optional: name of the contact if known */
+  contactName?: string;
 }
 
 /**

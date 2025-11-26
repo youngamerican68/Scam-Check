@@ -17,6 +17,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose }) =
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<ScanStatus>(ScanStatus.IDLE);
   const [result, setResult] = useState<ScanResult | null>(null);
+  const [fromKnownContact, setFromKnownContact] = useState<boolean | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ===========================================================================
@@ -76,7 +77,8 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose }) =
         body: JSON.stringify({
           text: text,
           imageBase64: base64Image,
-          contextWhoFor: 'self'
+          contextWhoFor: 'self',
+          fromKnownContact: fromKnownContact,
         }),
       });
 
@@ -133,6 +135,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose }) =
     setText('');
     setFile(null);
     setResult(null);
+    setFromKnownContact(undefined);
   };
 
   return (
@@ -197,6 +200,39 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose }) =
                       accept="image/*"
                       onChange={handleFileChange}
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-xl font-bold text-ink mb-3">
+                      Is this from a saved contact?
+                    </label>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setFromKnownContact(true)}
+                        className={`flex-1 py-3 px-4 rounded-xl border-2 font-semibold transition-all ${
+                          fromKnownContact === true
+                            ? 'border-emerald-500 bg-emerald-50 text-emerald-800'
+                            : 'border-stone-300 bg-white text-stone-600 hover:border-emerald-300'
+                        }`}
+                      >
+                        ✓ Yes, saved contact
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFromKnownContact(false)}
+                        className={`flex-1 py-3 px-4 rounded-xl border-2 font-semibold transition-all ${
+                          fromKnownContact === false
+                            ? 'border-red-400 bg-red-50 text-red-800'
+                            : 'border-stone-300 bg-white text-stone-600 hover:border-red-300'
+                        }`}
+                      >
+                        ✗ Unknown number
+                      </button>
+                    </div>
+                    <p className="text-stone-500 text-sm mt-2">
+                      Messages from unknown numbers are more likely to be scams
+                    </p>
                   </div>
 
                   <button

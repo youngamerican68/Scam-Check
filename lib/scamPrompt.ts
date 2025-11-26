@@ -132,7 +132,9 @@ Make steps age-friendly and non-technical.`;
 export function generateUserPrompt(
   text: string,
   contextWhoFor: ContextWhoFor,
-  hasImage: boolean
+  hasImage: boolean,
+  fromKnownContact?: boolean,
+  contactName?: string
 ): string {
   const contextNote = {
     self: "The person is checking this message for themselves.",
@@ -140,7 +142,17 @@ export function generateUserPrompt(
     other: "This check is being done for someone else (friend, family member, etc.)."
   }[contextWhoFor];
 
-  let prompt = `${contextNote}\n\nAnalyze the following message for scam indicators:\n\n---\n${text}\n---\n\n`;
+  let prompt = `${contextNote}\n\n`;
+
+  // Add contact context - this significantly affects risk assessment
+  if (fromKnownContact === true) {
+    const contactInfo = contactName ? `"${contactName}"` : "a saved contact";
+    prompt += `IMPORTANT CONTEXT: This message is from ${contactInfo} - a phone number saved in the user's contacts. This means the user has previously communicated with this person and saved their number. While account compromise is possible, messages from known contacts are MUCH less likely to be scams than messages from unknown numbers. Adjust your analysis accordingly - routine, friendly messages from known contacts should generally be marked "no_obvious_scam" unless there are clear red flags like urgent money requests.\n\n`;
+  } else if (fromKnownContact === false) {
+    prompt += `IMPORTANT CONTEXT: This message is from an UNKNOWN number (not saved in contacts). This significantly increases scam risk. Be extra cautious.\n\n`;
+  }
+
+  prompt += `Analyze the following message for scam indicators:\n\n---\n${text}\n---\n\n`;
 
   if (hasImage) {
     prompt += "\nNote: An image of the message was also provided. Consider visual elements like logos, formatting, and sender information in your analysis.\n\n";

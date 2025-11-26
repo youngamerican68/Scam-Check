@@ -146,7 +146,9 @@ async function openAIAnalyzeScam(
   const userPrompt = generateUserPrompt(
     input.text,
     input.contextWhoFor || "self",
-    !!input.imageBase64
+    !!input.imageBase64,
+    input.fromKnownContact,
+    input.contactName
   );
 
   const messages: any[] = [
@@ -212,7 +214,9 @@ async function mistralAnalyzeScam(
   const userPrompt = generateUserPrompt(
     input.text,
     input.contextWhoFor || "self",
-    !!input.imageBase64
+    !!input.imageBase64,
+    input.fromKnownContact,
+    input.contactName
   );
 
   const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
@@ -264,7 +268,9 @@ async function openRouterAnalyzeScam(
   const userPrompt = generateUserPrompt(
     input.text,
     input.contextWhoFor || "self",
-    !!input.imageBase64
+    !!input.imageBase64,
+    input.fromKnownContact,
+    input.contactName
   );
 
   const messages: any[] = [
@@ -337,7 +343,9 @@ async function customAnalyzeScam(
   const userPrompt = generateUserPrompt(
     input.text,
     input.contextWhoFor || "self",
-    !!input.imageBase64
+    !!input.imageBase64,
+    input.fromKnownContact,
+    input.contactName
   );
 
   const headers: Record<string, string> = {
