@@ -1,134 +1,137 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { ShieldCheck, CheckCircle, Lock, ArrowRight, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Lock, Sparkles } from 'lucide-react';
+
+// Stars component for twinkling effect
+const Stars = () => {
+  const stars = Array.from({ length: 50 }, (_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    top: `${Math.random() * 60}%`,
+    size: Math.random() > 0.7 ? 'large' : Math.random() > 0.4 ? 'medium' : 'small',
+    delay: `${Math.random() * 5}s`,
+    duration: `${2 + Math.random() * 3}s`,
+  }));
+
+  return (
+    <div className="stars-container">
+      {stars.map((star) => (
+        <div
+          key={star.id}
+          className={`star ${star.size === 'small' ? 'star-small' : star.size === 'large' ? 'star-large' : ''}`}
+          style={{
+            left: star.left,
+            top: star.top,
+            animation: `twinkle ${star.duration} ease-in-out ${star.delay} infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// Silhouette cityscape/landscape - smooth rolling hills
+const SilhouetteLandscape = () => (
+  <div className="absolute bottom-0 left-0 right-0 h-24 z-10">
+    <svg
+      viewBox="0 0 1440 96"
+      className="w-full h-full"
+      preserveAspectRatio="none"
+      fill="#0a0a0a"
+    >
+      {/* Smooth rolling hills - single continuous path */}
+      <path d="M0,96 L0,60 C120,50 180,65 300,55 C420,45 480,70 600,50 C720,30 800,55 960,40 C1100,28 1200,50 1320,35 C1380,30 1420,45 1440,40 L1440,96 Z" />
+    </svg>
+  </div>
+);
 
 export const Hero: React.FC<{ onStartScan: () => void }> = ({ onStartScan }) => {
   return (
-    <section className="relative min-h-[90vh] flex items-center bg-cream overflow-hidden py-16 lg:py-0">
-      
-      {/* Background - Cleaner, less blurry */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white rounded-full translate-x-1/3 -translate-y-1/3 shadow-2xl shadow-stone-200/50 pointer-events-none" />
+    <section className="relative min-h-screen overflow-hidden bg-nocturne-full noise-overlay">
+      {/* Stars */}
+      <Stars />
 
-      <div className="container mx-auto px-6 z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          
-          {/* LEFT COLUMN: Clarity & Action */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-xl"
+      {/* Sunrise glow at bottom */}
+      <div className="absolute inset-0 sunrise-glow" />
+
+      {/* Content */}
+      <div className="relative z-20 container mx-auto px-6 pt-8 pb-48 min-h-screen flex flex-col">
+
+        {/* Nav Bar - Glassmorphism */}
+        <nav className="glass rounded-full px-6 py-3 mb-16 flex items-center justify-between max-w-4xl mx-auto w-full animate-fadeInUp">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sunrise to-ember flex items-center justify-center shadow-glow-gold">
+              <ShieldCheck className="w-5 h-5 text-midnight" />
+            </div>
+            <span className="font-serif font-semibold text-xl text-starlight">Scam Shield</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-cloud">
+            <Lock className="w-4 h-4 text-sunrise" />
+            <span className="tracking-wide-plus">Free & Private</span>
+          </div>
+        </nav>
+
+        {/* Main Content - Centered */}
+        <div className="flex-grow flex flex-col items-center justify-center text-center max-w-4xl mx-auto">
+
+          {/* Floating Badge */}
+          <div className="glass-gold rounded-full px-5 py-2 mb-8 animate-fadeInUp inline-flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-sunrise" />
+            <span className="text-sunrise text-sm tracking-cinematic uppercase font-medium">AI-Powered Protection</span>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-semibold text-starlight leading-tight mb-6 animate-fadeInUp-delay-1">
+            Verify <em className="text-sunrise text-glow-gold">Suspicious</em>
+            <br />
+            Messages
+          </h1>
+
+          {/* Subheadline */}
+          <p className="text-xl md:text-2xl text-cloud leading-relaxed mb-12 max-w-2xl animate-fadeInUp-delay-2">
+            Not sure if that text or email is real? Paste it here for an
+            <span className="text-sunrise font-medium"> instant AI scan</span> against scams, phishing, and red flags.
+          </p>
+
+          {/* CTA Area - Glass Card */}
+          <div
+            onClick={onStartScan}
+            className="glass rounded-2xl p-2 cursor-pointer transition-all hover:shadow-glow-gold w-full max-w-2xl group animate-fadeInUp-delay-2"
           >
-            {/* Trust Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-800 text-sm font-bold tracking-wide uppercase mb-8 shadow-sm">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Free • Private • Secure</span>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex-grow glass-dark rounded-xl px-6 py-5 text-left">
+                <span className="text-cloud/60 text-lg group-hover:text-cloud/80 transition-colors">
+                  Paste suspicious message here...
+                </span>
+              </div>
+              <button className="bg-gradient-to-r from-sunrise to-ember text-midnight font-bold text-lg px-8 py-5 rounded-xl shadow-glow-gold hover:shadow-glow-ember transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                Scan Now
+              </button>
             </div>
+          </div>
 
-            {/* Headline - Direct & Functional */}
-            <h1 className="text-5xl lg:text-7xl font-serif font-bold text-ink leading-[1.1] mb-6">
-              Verify Suspicious Messages
-            </h1>
-
-            {/* Subhead - Plain English with integrated AI explanation */}
-            <p className="text-xl text-ink/80 leading-relaxed mb-10 font-medium max-w-lg">
-              Not sure if a text or email is real? Paste it here for an <span className="text-emerald-700 font-bold">instant AI-powered scan</span> against scams, phishing, and red flags. <span className="text-emerald-700 font-bold">Results in seconds.</span>
-            </p>
-
-            {/* MOCK INPUT / CTA AREA */}
-            <div className="mb-6">
-              <div 
-                onClick={onStartScan}
-                className="group relative bg-white p-2 rounded-2xl shadow-xl shadow-stone-900/10 border-2 border-stone-200 flex flex-col sm:flex-row items-center cursor-pointer transition-all hover:border-emerald-500 hover:shadow-emerald-900/20"
-              >
-                <div className="flex-grow px-4 md:px-6 py-4 w-full sm:w-auto">
-                  {/* Mock Placeholder */}
-                  <span className="text-stone-400 text-lg font-medium select-none group-hover:text-stone-500 transition-colors">
-                    Paste suspicious text here...
-                  </span>
-                </div>
-                <button
-                  className="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-md transition-all transform active:scale-95 flex-shrink-0"
-                >
-                  Scan Message for Scams
-                </button>
-              </div>
-              
-              {/* Trust Microcopy */}
-              <div className="pl-2 pt-4 space-y-2">
-                <p className="text-sm font-bold text-ink/60 flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-emerald-600" />
-                  <span className="text-emerald-700">Free and instant.</span> No sign-up required.
-                </p>
-                <p className="text-xs text-stone-600 font-medium">
-                  <span className="font-bold">We don't store your message.</span> Remove personal details if you'd like extra privacy.
-                </p>
-              </div>
+          {/* Trust Indicators */}
+          <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm text-cloud/70">
+            <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4 text-sunrise/70" />
+              <span>Never Stored</span>
             </div>
-          </motion.div>
-
-          {/* RIGHT COLUMN: Static Clarity (Before/After Card) */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative hidden lg:block"
-          >
-            <div className="relative bg-white rounded-3xl shadow-2xl shadow-stone-900/10 border border-stone-100 p-8">
-              {/* Card Title */}
-              <div className="text-center border-b border-stone-100 pb-6 mb-6">
-                <h3 className="text-2xl font-serif font-bold text-ink">Example Result</h3>
-                <p className="text-sm text-stone-500 mt-1">What you'll see in seconds</p>
-              </div>
-
-              <div className="space-y-6">
-                {/* Example Problem */}
-                <div className="flex gap-4 opacity-100">
-                   <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0">
-                      <AlertTriangle className="w-6 h-6 text-red-500" />
-                   </div>
-                   <div className="bg-red-50 p-5 rounded-2xl rounded-tl-none border border-red-100 w-full">
-                      <p className="font-bold text-red-800 text-sm mb-1 uppercase tracking-wider">Suspicious Message</p>
-                      <p className="text-stone-800 font-medium">"Mom, I lost my phone. Send money to this number..."</p>
-                   </div>
-                </div>
-
-                {/* Arrow */}
-                <div className="flex justify-center -my-2">
-                  <div className="bg-stone-100 p-2 rounded-full text-stone-400">
-                    <ArrowRight className="w-5 h-5 rotate-90" />
-                  </div>
-                </div>
-
-                {/* Example Solution with Color-Coded Verdict Badge */}
-                <div className="flex gap-4">
-                   <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                      <ShieldCheck className="w-6 h-6 text-emerald-600" />
-                   </div>
-                   <div className="bg-emerald-50 p-5 rounded-2xl rounded-tl-none border border-emerald-100 w-full">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="inline-block px-3 py-1 bg-red-600 text-white text-xs font-bold uppercase rounded-full tracking-wider">⚠ Suspicious</span>
-                        <span className="text-xs text-stone-500">— High Risk Detected</span>
-                      </div>
-                      <p className="text-stone-800 font-medium">
-                        <span className="font-bold text-emerald-700">Do not reply.</span> This is a common "Grandparent Scam" trying to panic you.
-                      </p>
-                   </div>
-                </div>
-              </div>
-
-              {/* Legend */}
-              <p className="text-xs text-stone-500 text-center mt-4">
-                You'll see: a quick verdict, plus why we flagged it
-              </p>
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-sunrise/70" />
+              <span>No Sign-up Required</span>
             </div>
-
-            {/* Decorative background blob */}
-            <div className="absolute inset-0 bg-emerald-600/5 rounded-3xl blur-2xl transform scale-95 translate-y-4 -z-10" />
-          </motion.div>
-
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-sunrise/70" />
+              <span>Results in Seconds</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Silhouette Landscape */}
+      <SilhouetteLandscape />
+
+      {/* Horizon glow line */}
+      <div className="absolute bottom-24 left-0 right-0 horizon-glow z-[9]" />
     </section>
   );
 };
