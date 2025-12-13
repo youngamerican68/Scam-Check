@@ -149,7 +149,7 @@ export function generateUserPrompt(
     const contactInfo = contactName ? `"${contactName}"` : "a saved contact";
     prompt += `IMPORTANT CONTEXT: This message is from ${contactInfo} - a phone number saved in the user's contacts. This means the user has previously communicated with this person and saved their number. While account compromise is possible, messages from known contacts are MUCH less likely to be scams than messages from unknown numbers. Adjust your analysis accordingly - routine, friendly messages from known contacts should generally be marked "no_obvious_scam" unless there are clear red flags like urgent money requests.\n\n`;
   } else if (fromKnownContact === false) {
-    prompt += `IMPORTANT CONTEXT: This message is from an UNKNOWN number (not saved in contacts). This significantly increases scam risk. Be extra cautious.\n\n`;
+    prompt += `CONTEXT: This message is from an unknown number (not saved in contacts). While this is worth noting, do NOT automatically flag innocent messages as suspicious just because the sender is unknown. Only flag as "suspicious" or "high_scam" if there are actual red flags present (money requests, urgency, personal info requests, suspicious links, etc.). A simple friendly message like "hello, let's get coffee" from an unknown number should be "no_obvious_scam" - it's normal for people to reach out from new numbers.\n\n`;
   }
 
   prompt += `Analyze the following message for scam indicators:\n\n---\n${text}\n---\n\n`;
