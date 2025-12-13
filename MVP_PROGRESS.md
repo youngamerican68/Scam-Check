@@ -3,7 +3,7 @@
 **Project:** Scam Shield (The Granny Guard)
 **Goal:** $50-150 MRR in 60 days (10-30 paying families)
 **Timeline:** 2-week MVP sprint
-**Last Updated:** December 11, 2024
+**Last Updated:** December 13, 2024
 
 ---
 
@@ -292,12 +292,173 @@
 **iOS App Location:** `/Users/paulsowell/Scam Check/ScamShield/`
 
 **Remaining iOS Tasks:**
-- [ ] Create Share Extension (share text from Messages → instant scan)
+- [x] Create Share Extension (share text from Messages → instant scan) ✅
+- [x] Create Clipboard detection with one-tap banner ✅
 - [ ] Build lock screen widget
 - [ ] Build home screen widget
 - [ ] Create app icons
 - [ ] Prepare App Store screenshots
 - [ ] ASO keyword research before submission
+
+### December 13, 2024 - iOS Share Extension & Clipboard Flow (MAJOR UPDATE)
+
+#### Share Extension - COMPLETE ✅
+Built full iOS Share Extension for sharing text directly from Messages/Safari/Notes:
+
+**Files Created/Modified:**
+- `ScamShieldShare/ShareViewController.swift` - Complete share extension implementation
+- `ScamShield/App/ScamShieldApp.swift` - URL handler for share payloads
+
+**Technical Implementation:**
+- **App Groups:** `group.com.scamshield.shared` for data sharing between app and extension
+- **URL Scheme:** `scamshield://scan?id=...` for deep linking from extension to app
+- **ID-based payload handoff:** Unique UUID per share, stored in UserDefaults dictionary
+- **One-time consumption:** Payloads are deleted after being read (prevents replay)
+- **5-minute expiry:** Stale payloads auto-cleanup on app launch
+
+**Share Extension Flow:**
+```
+User selects text → Share → Scam Shield → "Preparing scan..." spinner
+    ↓
+Extension saves payload to App Group with UUID
+    ↓
+Extension calls extensionContext?.open(scamshield://scan?id=UUID)
+    ↓
+If success: Main app opens → consumes payload → auto-scans
+If failure: Fallback "Open Scam Shield" button appears (2s timeout)
+```
+
+**ShareViewController.swift Key Features:**
+- Custom UI matching app theme (midnight background, sunrise accents)
+- Shield icon + "Preparing scan..." status
+- Auto-attempts to open main app via URL scheme
+- Graceful fallback button if open() fails
+- Extracts both plainText and URL content types
+- Max 8000 character limit enforced
+
+#### Clipboard Flow - COMPLETE ✅ (Primary elderly user flow)
+Built privacy-respecting clipboard detection that does NOT read clipboard on launch:
+
+**Files Modified:**
+- `ScamShield/Features/Scan/Views/ScanView.swift` - Clipboard banner and detection logic
+
+**Privacy Design:**
+- Only checks `UIPasteboard.general.hasStrings` (metadata, not content)
+- Only checks `changeCount` (integer, not content)
+- **NEVER** reads `UIPasteboard.general.string` until user explicitly taps
+- No iOS "pasted from..." privacy banner on app launch
+
+**Banner State Machine:**
+```swift
+enum ClipboardBannerState {
+    case ready     // "Scan Message I Copied" button
+    case scanning  // Spinner + "Scanning..." (button disabled)
+    case error     // Orange warning + "Try Again" + error message
+}
+```
+
+**changeCount Tracking:**
+- `@AppStorage("pasteboardLastHandledChangeCount")` - tracks scanned content
+- `@AppStorage("pasteboardLastDismissedChangeCount")` - tracks dismissed content
+- Banner only shows for NEW clipboard content (different changeCount)
+- Persists across app launches to avoid repeat prompting
+
+**Clipboard Banner UI (Elderly-Optimized):**
+```
+┌─────────────────────────────────────────────┐
+│  📋  Scan Message I Copied                  │  ← Big yellow button
+│                                             │
+│  Tip: In Messages, press and hold → Copy    │  ← Coaching text
+│                                             │
+│                 Dismiss                     │  ← Small, secondary
+└─────────────────────────────────────────────┘
+```
+
+**Clipboard Flow:**
+```
+User copies message (anywhere) → Opens Scam Shield
+    ↓
+App detects hasStrings=true with new changeCount
+    ↓
+Shows big yellow "Scan Message I Copied" banner
+    ↓
+User taps banner → Banner shows "Scanning..." state
+    ↓
+App reads clipboard (NOW, with user intent) → Populates text field
+    ↓
+User sees their message for 1.5 seconds (confirmation)
+    ↓
+Scan starts automatically → Results displayed
+```
+
+**Error Handling:**
+- If clipboard read fails (rare): Banner turns orange with "Couldn't read the copied text. Please copy again."
+- "Try Again" button lets user retry
+- "Dismiss" always available
+
+**Banner Show/Hide Rules:**
+- Only shows when `scanState == .idle`
+- Only shows when `messageText.isEmpty`
+- Only shows when `hasStrings == true`
+- Only shows when `changeCount` is new (not previously scanned/dismissed)
+- Hides automatically after share extension populates text field
+- Hides when scan starts
+
+#### Code Architecture Summary
+
+**Main App (`ScamShield/` target):**
+```
+ScamShield/
+├── App/
+│   └── ScamShieldApp.swift        # URL handling, AppState, ShareStore.consume()
+├── Features/
+│   └── Scan/
+│       ├── Views/
+│       │   └── ScanView.swift     # Clipboard banner, main scan UI
+│       └── ViewModels/
+│           └── ScanViewModel.swift # Scan logic, API calls
+└── Design/
+    ├── Colors.swift               # Nocturne theme colors
+    ├── Typography.swift           # System fonts
+    └── Components/                # GlassCard, PrimaryButton, etc.
+```
+
+**Share Extension (`ScamShieldShare/` target):**
+```
+ScamShieldShare/
+├── ShareViewController.swift      # Extension UI + payload handoff
+└── Info.plist                     # NSExtensionActivationSupportsText
+```
+
+**Shared Data Types (embedded in both targets):**
+```swift
+enum ShareSource: String, Codable { case shareExtension, clipboard }
+struct SharePayload: Codable { id, text, createdAt, source }
+enum ShareStore { save(), consume(), cleanupExpired() }
+```
+
+#### Testing Results
+- ✅ Clipboard: Copy from Messages → Open app → Tap banner → Text visible for 1.5s → Scan completes
+- ✅ Share Extension: Share from Messages → App opens → Auto-scan completes
+- ✅ Error states: Banner shows friendly error if clipboard empty
+- ✅ changeCount: Banner doesn't reappear for same clipboard content
+
+#### Elderly User Experience Summary
+**Primary Flow (Clipboard - recommended):**
+1. Receive suspicious message
+2. Long press → Copy
+3. Open Scam Shield
+4. See big yellow "Scan Message I Copied" button
+5. Tap once
+6. See your message appear (confirmation)
+7. Results appear automatically
+
+**Secondary Flow (Share Extension):**
+1. Receive suspicious message
+2. Select text → Share → Scam Shield
+3. Extension shows "Preparing scan..."
+4. App opens and auto-scans
+5. Results appear
 
 ---
 
