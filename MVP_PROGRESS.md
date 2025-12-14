@@ -3,7 +3,7 @@
 **Project:** Scam Shield (The Granny Guard)
 **Goal:** $50-150 MRR in 60 days (10-30 paying families)
 **Timeline:** 2-week MVP sprint
-**Last Updated:** December 13, 2024
+**Last Updated:** December 13, 2025
 
 ---
 
@@ -459,6 +459,239 @@ enum ShareStore { save(), consume(), cleanupExpired() }
 3. Extension shows "Preparing scan..."
 4. App opens and auto-scans
 5. Results appear
+
+### December 13, 2025 (Evening) - Email Forward-to-Scan Feature
+
+#### Email Inbound Webhook - COMPLETE ✅
+Built full Mailgun inbound webhook for email-to-scan functionality:
+
+**Architecture Design:**
+- Per-user unique scan address: `u_<token>@scamshield.app`
+- Token is a revocable secret mapped to userId (not the userId itself)
+- Minimal scan record storage (no raw email content for privacy)
+- Signature verification + timestamp freshness check
+
+**Files Created:**
+- `app/api/mailgun/inbound/route.ts` - Mailgun webhook endpoint
+- `app/api/scans/route.ts` - Scan history API endpoint
+- `lib/scanStore.ts` - Shared in-memory store (swap to Vercel KV later)
+
+**Webhook Features:**
+- Mailgun signature verification (HMAC-SHA256)
+- 5-minute timestamp window (prevents replay attacks)
+- `BYPASS_MAILGUN_SIGNATURE=true` flag for local testing
+- Extracts plaintext body (stripped-text preferred over body-plain)
+- Extracts subject, from domain, message ID for provenance
+- Calls existing AI analyzer (same as manual scans)
+- Stores minimal scan record (verdict + summary + tactics, no raw email)
+
+**API Endpoints:**
+```
+POST /api/mailgun/inbound  → Receives forwarded emails, analyzes, stores
+GET  /api/mailgun/inbound  → Health check (shows test address)
+GET  /api/scans            → Returns scan history for user
+```
+
+**Test Address:** `u_k9Xm2pL8nQ@scamshield.app` (hardcoded for prototype)
+
+**Scan Record Structure:**
+```json
+{
+  "id": "scan_xxx",
+  "userId": "user_test_001",
+  "source": "email_forward",
+  "subjectSnippet": "URGENT: Your PayPal...",
+  "fromDomain": "evil.com",
+  "verdict": "high_scam",
+  "summary": "PayPal phishing attempt...",
+  "tactics": ["urgency", "authority_impersonation", ...],
+  "safeSteps": ["Do not click...", ...],
+  "confidence": 0.95,
+  "createdAt": "2025-12-14T03:48:36.442Z"
+}
+```
+
+**Email Forward Flow:**
+```
+Grandma forwards email to: u_<token>@scamshield.app
+    ↓
+Mailgun receives → POST /api/mailgun/inbound
+    ↓
+Signature verified → Email parsed → AI analyzes
+    ↓
+Result stored → App fetches via GET /api/scans
+    ↓
+(Future) Push notification to app
+```
+
+**Testing Results:**
+- ✅ Webhook receives simulated Mailgun POST
+- ✅ Signature bypass works for local testing (dev only)
+- ✅ Token extraction from recipient address works
+- ✅ AI analysis runs and returns verdict (high confidence)
+- ✅ Scan record stored in shared store
+- ✅ Scan history API returns results
+- ✅ Dedupe by messageId prevents duplicate scans
+
+**Why Per-User Address:**
+- Solves "which grandma?" problem without matching by sender email
+- No brittle header parsing or forwarding chain issues
+- User just needs one address (shown in app with copy button)
+- Token is revocable if leaked
+
+**Security Notes:**
+- Signature bypass only works when `NODE_ENV=development`
+- Health check hides test address/token in production
+- Dedupe by messageId prevents duplicate scans from retries
+- `/api/scans` currently returns test user only - **must add auth before production**
+
+**Remaining for Email Feature:**
+- [ ] Set up Mailgun account + domain MX records
+- [ ] Create inbound route in Mailgun dashboard
+- [ ] Add `MAILGUN_SIGNING_KEY` to production env
+- [ ] Add auth to `/api/scans` endpoint (session/JWT)
+- [x] Build scan history UI in iOS app ✅
+- [x] Build "Save to Contacts" feature for easy email forwarding ✅
+- [ ] Add push notifications (later)
+- [ ] Swap in-memory store to Vercel KV
+
+**Elderly UX for Email:**
+1. Open Scam Shield app
+2. See "Your Email Scan Address" with big copy button
+3. Forward suspicious email to that address
+4. Open app → see result in Recent Scans (pull to refresh)
+
+### December 14, 2025 - iOS Scan History & Save to Contacts
+
+#### Save to Contacts Feature - COMPLETE ✅
+Built "Save Scam Shield to Contacts" for elderly-friendly email forwarding:
+
+**Problem Solved:**
+- Typing `u_k9Xm2pL8nQ@scamshield.app` fails 100% of the time for elderly users
+- Solution: Save it as a contact named "Scam Shield"
+- Now users just type "Scam" in To: field → autocomplete does the rest
+
+**Files Created/Modified:**
+- `ScamShield/Services/ContactsManager.swift` - Added `saveScamShieldContact()`, `checkScamShieldContactExists()`
+- `ScamShield/Features/Settings/ViewModels/SettingsViewModel.swift` - Added email scanning state management
+- `ScamShield/Features/Settings/Views/SettingsView.swift` - Added Email Scanning card with Save button
+- `ScamShield/Services/APIConfig.swift` - Added `emailScanAddress`, `userScanToken`, `scanHistoryURL`
+- `ScamShield-Info.plist` - Updated NSContactsUsageDescription
+
+**Email Scanning Card UI:**
+```
+┌────────────────────────────────────────────────────┐
+│  📧 Email Scanning                    [Ready/Set Up] │
+│                                                      │
+│  Forward suspicious emails to check them instantly.  │
+│                                                      │
+│  ─────────────────────────────────────────────────  │
+│  Step 1: Save to Contacts                           │
+│  This lets you easily forward emails by typing      │
+│  "Scam" in the To: field.                           │
+│                                                      │
+│  ┌──────────────────────────────────────────────┐  │
+│  │  👤+ Save "Scam Shield" to Contacts          │  │
+│  └──────────────────────────────────────────────┘  │
+│                                                      │
+│  Your scan address:                                  │
+│  u_k9Xm2pL8nQ@scamshield.app              [Copy]   │
+└────────────────────────────────────────────────────┘
+```
+
+**After Saving:**
+- Status badge changes from "Set Up" (orange) to "Ready" (green)
+- Button replaced with "✅ Scam Shield saved to Contacts"
+- Instructions: "To scan an email: tap Forward, type 'Scam', and send to Scam Shield"
+
+#### Scan History UI - COMPLETE ✅
+Built full scan history list and detail views:
+
+**Files Created:**
+- `ScamShield/Services/ScanHistoryService.swift` - API client to fetch `/api/scans`
+- `ScamShield/Features/History/ViewModels/ScanHistoryViewModel.swift` - State management, pagination
+- `ScamShield/Features/History/Views/ScanHistoryView.swift` - List view, detail view, empty state
+
+**Models Added (in ScamCheckModels.swift):**
+```swift
+enum ScanSource: String, Codable {
+    case clipboard, shareExtension, emailForward, smsFilter, manual
+}
+
+struct ScanHistoryItem: Identifiable, Codable {
+    id, userId, source, subjectSnippet, fromDomain, messageId,
+    verdict, summary, tactics, safeSteps, confidence, createdAt
+}
+
+struct ScanHistoryResponse: Codable {
+    scans, total, limit, offset, hasMore
+}
+```
+
+**Scan History List UI:**
+```
+┌────────────────────────────────────────────────────┐
+│  ← Scan History                                     │
+│                                                      │
+│  3 scans                                            │
+│                                                      │
+│  ┌────────────────────────────────────────────────┐│
+│  │ 🔴  URGENT: Verify your account                ││
+│  │     📧 Email • Dec 14, 2025          [Danger]  ││
+│  └────────────────────────────────────────────────┘│
+│                                                      │
+│  ┌────────────────────────────────────────────────┐│
+│  │ 🔴  Your order has been placed                 ││
+│  │     📧 Email • Dec 14, 2025          [Danger]  ││
+│  └────────────────────────────────────────────────┘│
+│                                                      │
+│  ┌────────────────────────────────────────────────┐│
+│  │ 🟡  This weeks deals at your local Costco      ││
+│  │     📧 Email • Dec 14, 2025          [Warning] ││
+│  └────────────────────────────────────────────────┘│
+└────────────────────────────────────────────────────┘
+```
+
+**Scan Detail View:**
+- Large verdict icon with color-coded background
+- Summary card with AI explanation
+- "Red Flags Detected" card (if any tactics found)
+- "Recommended Actions" card with numbered safe steps
+- Details card (source, from domain, scanned date)
+
+**Features:**
+- Pull-to-refresh
+- Infinite scroll pagination
+- Loading states
+- Empty state with "Scan Something" CTA
+- Error state with retry button
+- Haptic feedback on interactions
+
+**Navigation:**
+- Added 🕐 History button to main ScanView toolbar (top-left)
+- Opens as modal sheet
+
+#### Bug Fixes
+- Fixed `HapticManager.shared.impact(.light)` → `buttonTap()` (3 files)
+- Fixed invalid SF Symbols (`message.badge.shield.fill` → `message.fill`, etc.)
+
+#### End-to-End Testing Results
+Successfully tested the full email-to-history flow:
+
+1. **Simulated 3 emails via curl:**
+   - PayPal phishing → High Risk (red)
+   - Amazon scam → High Risk (red)
+   - Costco newsletter → Suspicious (yellow)
+
+2. **iOS app displays all 3 in History:**
+   - Pull-to-refresh works
+   - Tap for full details works
+   - Color coding correct
+
+3. **"Grandma Test" passed:**
+   - Tap 🕐 → See scan history
+   - Tap any scan → See full verdict with safe steps
+   - Clear, readable, elderly-friendly UI
 
 ---
 
