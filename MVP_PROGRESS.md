@@ -768,6 +768,36 @@ e25ed9e Add owl mascot branding and streamlined clipboard UX
 - Streamlined clipboard UX (auto-scan after paste)
 - Main screen now shows owl logo instead of shield icon
 
+### December 15, 2025 - Logo Polish & UI Refinements
+
+#### Logo Iterations
+Went through multiple logo iterations to find the right balance:
+- Tested symmetric owl designs from Gemini
+- Discovered AI generators can't create true transparency (fake checker patterns)
+- Solution: Use Adobe Express background remover on solid-background logos
+- Final logo: One-wing owl with shield, transparent background
+
+#### Main Screen UI Polish
+- Added "Scam Shield" title text below owl logo
+- Added warm sunrise glow effect behind owl
+- Added instruction text: "In Messages: hold message → Copy → Open app and paste"
+- Added "or" separator between paste instruction and manual entry
+- Tightened spacing between owl and text
+- Increased instruction text size (17pt) for elderly readability
+- Raised content up (reduced top padding)
+- Enlarged text input area (150-250pt height)
+
+#### Git Commit
+```
+4445b8d Polish main screen UI and update owl logo
+```
+
+#### Key Learnings
+- AI image generators (Gemini, ChatGPT) cannot create true PNG transparency
+- They draw checker patterns as pixels instead of alpha channel
+- Always verify with `sips --getProperty hasAlpha` before using
+- Adobe Express background remover works well for creating real transparency
+
 ---
 
 *This file will be updated as progress continues.*
