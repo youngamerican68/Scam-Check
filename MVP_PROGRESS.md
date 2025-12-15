@@ -693,6 +693,81 @@ Successfully tested the full email-to-history flow:
    - Tap any scan → See full verdict with safe steps
    - Clear, readable, elderly-friendly UI
 
+### December 14, 2025 (Night) - Owl Mascot Branding & UX Polish
+
+#### Owl Mascot Branding - COMPLETE ✅
+Added owl mascot ("Guardian Owl") to give the app personality and build trust with elderly users:
+
+**Design Rationale:**
+- Owls = wisdom, watchfulness, protection
+- Friendly but professional appearance
+- Different moods for different verdict states
+- Makes the app feel like "a wise friend watching over you"
+
+**Assets Created:**
+- `Assets.xcassets/Mascot/` - Full mascot asset catalog
+  - `owl-default.imageset` - Neutral pose
+  - `owl-safe.imageset` - Happy/celebrating (green verdict)
+  - `owl-warning.imageset` - Alert/cautious (yellow verdict)
+  - `owl-danger.imageset` - Protective/stern (red verdict)
+  - `owl-scanning.imageset` - Searching pose
+  - `owl-idle.imageset` - Perched/waiting
+- `Assets.xcassets/LaunchLogo.imageset/` - Owl-in-shield logo for branding
+
+**MascotView Component:**
+- `ScamShield/Design/Components/MascotView.swift`
+- Mood-based image selection
+- Automatic mood mapping from ScamVerdict
+- Subtle breathing animation
+- Reusable across all screens
+
+**Integration Points:**
+- **Launch Screen:** Owl logo with "SCAM SHIELD" text
+- **Main Screen:** Large owl logo replacing SF Symbol shield
+- **Scanning View:** Scanning owl with pulse ring animations
+- **Results View:** Mood matches verdict (safe=happy, warning=alert, danger=protective)
+- **History Empty State:** Idle owl with friendly message
+
+#### Clipboard UX Streamlined - COMPLETE ✅
+Simplified the clipboard flow to reduce taps for elderly users:
+
+**Before:** Copy → Open app → See banner → Tap banner → Allow paste → Scan starts (2 taps)
+**After:** Copy → Open app → Allow paste → Scan starts automatically (1 tap)
+
+**Technical Changes:**
+- Removed clipboard banner UI entirely
+- Auto-scan triggers immediately after paste permission granted
+- Smart content detection (only prompts for message-like content: 15+ chars, 3+ words)
+- Only checks clipboard when returning from background (not on initial launch)
+- Prevents iOS paste permission prompt on every app open
+
+**Files Modified:**
+- `ScanView.swift` - Removed banner, added auto-scan logic, added `looksLikeScannableContent()` filter
+
+#### Launch Screen - COMPLETE ✅
+Added proper iOS launch screen with owl branding:
+
+**Files Created:**
+- `ScamShield/LaunchScreen.storyboard` - Launch screen with centered owl logo
+- Updated `ScamShield-Info.plist` - Added `UILaunchStoryboardName`
+
+**Design:**
+- Dark navy background (#0D1426)
+- Centered owl-in-shield logo (200x200)
+- Matches app theme for seamless transition
+
+#### Git Commit
+```
+e25ed9e Add owl mascot branding and streamlined clipboard UX
+```
+
+**Summary of Changes:**
+- 24 files changed, 363 insertions, 84 deletions
+- New mascot assets and MascotView component
+- Launch screen with owl logo
+- Streamlined clipboard UX (auto-scan after paste)
+- Main screen now shows owl logo instead of shield icon
+
 ---
 
 *This file will be updated as progress continues.*
