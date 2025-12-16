@@ -115,6 +115,73 @@
 
 ---
 
+## 🍎 Apple / App Store Strategy
+
+### ⚠️ CRITICAL DECISION: Monetization Path
+
+Your plan ("5 free checks → paywall") is a **digital entitlement**. Apple will require **In-App Purchase (StoreKit)**, not Stripe, for iOS monetization. Stripe will get rejected.
+
+**Two viable paths:**
+
+| Path | Pros | Cons |
+|------|------|------|
+| **A: Free v1 (no paywall)** | Fastest to App Store, no IAP complexity | No revenue from iOS initially |
+| **B: Monetized from day one** | Revenue immediately, full feature set | Requires StoreKit implementation |
+
+**Recommendation:** Ship Path A first (free, usage-limited), add IAP later once you have traction.
+
+### Apple Timeline Checklist
+
+#### NOW (Before You Ship Anything)
+- [ ] Enroll in Apple Developer Program ($99/year) - developer.apple.com
+- [ ] Create app record in App Store Connect (name, bundle ID, SKU)
+- [ ] Set up users/roles, agreements, banking, tax info
+- [ ] Reserve app name: "Scam Shield" or "The Granny Guard"
+
+#### When Adding Payments (Decision Point)
+- [ ] **If iOS paywall:** Implement StoreKit (not Stripe)
+- [ ] Create subscription products in App Store Connect
+- [ ] Implement "Restore Purchases" button (required)
+- [ ] Verify entitlements via App Store Server API or StoreKit 2
+- [ ] **Web paywall:** Can still use Stripe for web version
+
+#### 1-2 Weeks Before Launch
+- [ ] App privacy "nutrition label" answers
+- [ ] App Review notes (explain: "scans user-pasted messages for scam detection")
+- [ ] Screenshots for all required device sizes
+- [ ] Support URL (can be simple contact page)
+- [ ] Privacy Policy URL (required, must be live)
+- [ ] Content moderation disclosures (if showing analyzed text)
+
+#### When Feature-Complete
+- [ ] Upload first build to App Store Connect
+- [ ] Start TestFlight internal testing immediately
+- [ ] Start TestFlight external testing when stable (requires mini-review)
+- [ ] Learn about blockers: missing purpose strings, login requirements, etc.
+
+#### Final Submission
+- [ ] Auth works end-to-end
+- [ ] Scanning works (paste → analyze → results)
+- [ ] Paywall/IAP works OR removed for v1
+- [ ] Privacy policy is live at public URL
+- [ ] "Restore Purchases" exists (if subscription)
+- [ ] All Info.plist usage descriptions accurate
+
+### App Review Tips for Scam Shield
+- **Explain the scanner clearly:** "Users paste suspicious messages to check for scam indicators"
+- **Privacy is key:** Emphasize that messages are analyzed but not stored
+- **Demo account:** May need to provide test credentials if you add auth
+- **Content moderation:** Since you display analyzed text, may need to address this
+
+### Current Status
+- ✅ iOS SwiftUI app built (ScamShield)
+- ✅ Core scanning functionality working
+- ⚠️ Apple Developer enrollment: **NOT DONE**
+- ⚠️ App Store Connect setup: **NOT DONE**
+- ⚠️ Monetization path: **NOT DECIDED**
+
+---
+
 ## 🚧 Known Issues & Technical Debt
 
 ### High Priority (Fix Before Launch)
