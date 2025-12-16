@@ -3,7 +3,7 @@
 **Project:** Scam Shield (The Granny Guard)
 **Goal:** $50-150 MRR in 60 days (10-30 paying families)
 **Timeline:** 2-week MVP sprint
-**Last Updated:** December 13, 2025
+**Last Updated:** December 15, 2025
 
 ---
 
@@ -797,6 +797,110 @@ Went through multiple logo iterations to find the right balance:
 - They draw checker patterns as pixels instead of alpha channel
 - Always verify with `sips --getProperty hasAlpha` before using
 - Adobe Express background remover works well for creating real transparency
+
+### December 15, 2025 (Evening) - Elderly-Friendly UX Improvements v2
+
+#### Branch: `ux-v2-elderly` - COMPLETE ✅
+Built comprehensive elderly-friendly UX improvements on a separate branch for easy revert:
+
+**Files Modified:**
+- `ScanView.swift` - Major UX overhaul (301 lines changed)
+- `SettingsView.swift` - Added Accessibility section
+- `Colors.swift` - Added high contrast environment key
+- `GlassCard.swift` - High contrast mode support
+- `ScamShieldApp.swift` - Applied high contrast modifier at root
+
+#### New "Paste from Clipboard" Button - COMPLETE ✅
+Added permanent, always-visible paste button above the text input:
+
+**Problem Solved:**
+- Elderly users don't realize they need to tap into text box, then paste
+- New big yellow button makes it obvious: "Paste from Clipboard"
+
+**Implementation:**
+- 56pt tall button with clipboard icon
+- Dims when clipboard is empty (0.4 opacity)
+- Triggers haptic feedback on paste
+- Also added small "Paste" chip inside text area as fallback
+
+#### Simplified Instructions - COMPLETE ✅
+Reduced cognitive load:
+
+**Before:** 3 separate lines of instructions
+**After:** Single line: "Copy a message, then tap Paste"
+
+Also added:
+- "Or type it here" divider (higher contrast, semibold)
+- "Message to check" label above text input
+
+#### Check Message Button States - COMPLETE ✅
+Made enabled/disabled states unmistakable:
+
+**Disabled state (empty field):**
+- Gray muted gradient
+- No shadow
+- Helper text: "Paste or type a message to check" (high contrast)
+
+**Enabled state (has text):**
+- Bright sunrise→ember gradient
+- Ember glow shadow
+- Helper text: "We'll explain what looks risky and what to do next"
+
+#### Trust Badges Updated - COMPLETE ✅
+Changed from vague claims to accurate, verifiable statements:
+
+**Before:** "Private / Instant / Free" (vague)
+**After:**
+- "Checked securely" (not "100% private" since we use server-side AI)
+- "No ads ever"
+- "We never text back"
+- "Privacy-first"
+
+**Also:**
+- Changed icon color from verdictSafe (green) to sunrise (neutral brand color)
+- Used `ViewThatFits` for graceful wrapping at Accessibility XXL text sizes
+
+#### High Contrast Mode - COMPLETE ✅
+Added accessibility toggle in Settings:
+
+**Implementation:**
+- `@AppStorage("highContrastEnabled")` persists setting
+- `HighContrastKey` environment key propagates to all views
+- Also respects iOS `accessibilityReduceTransparency` automatically
+- `respectHighContrast()` modifier applied at app root
+
+**High Contrast Effects:**
+- GlassCard: Solid background instead of blur
+- Higher border opacity for better definition
+- Text at full opacity
+
+#### Layout Optimizations - COMPLETE ✅
+Tightened spacing so everything fits on screen without scrolling:
+
+- VStack spacing: 24 → 16
+- Text input height: 150-250 → 100-180
+- Trust badges spacing: 12 → 6
+- Removed excess header padding
+- Added 40pt bottom padding for home indicator
+
+#### Tap Target Accessibility - COMPLETE ✅
+- Paste chip: 44x44pt minimum (iOS guideline)
+- Check Message button: 58pt tall
+- Paste button: 56pt tall
+
+#### Git Commit & Push
+```
+908d692 Elderly-friendly UX improvements (v2)
+Branch: ux-v2-elderly (pushed to origin)
+```
+
+**Testing Results:**
+- ✅ Paste button visible and dims when clipboard empty
+- ✅ Check Message clearly disabled when no text
+- ✅ Helper text guides user based on state
+- ✅ High Contrast toggle works in Settings
+- ✅ Trust badges fit on screen with tighter spacing
+- ✅ All content visible above home indicator
 
 ---
 
