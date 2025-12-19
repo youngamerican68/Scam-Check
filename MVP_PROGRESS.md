@@ -66,7 +66,7 @@
 - [x] Image analysis support
 - [x] Structured JSON response parsing
 - [x] **OpenRouter API key configured** ✅
-- [x] **Real AI (Claude 3.5 Sonnet) now active** ✅
+- [x] **Real AI (Gemini 2.0 Flash) now active** ✅
 
 **Status:** Real AI working! Tested with scam messages successfully.
 
@@ -186,7 +186,7 @@ Your plan ("5 free checks → paywall") is a **digital entitlement**. Apple will
 
 ### High Priority (Fix Before Launch)
 1. ~~**Mock AI gives false negatives**~~ ✅ FIXED - Now using real AI with known contact detection
-2. ~~**No real AI configured**~~ ✅ FIXED - OpenRouter API key configured, Claude 3.5 Sonnet active
+2. ~~**No real AI configured**~~ ✅ FIXED - OpenRouter API key configured, Gemini 2.0 Flash active
 3. **Auth disabled for testing** - Need to re-enable after Google OAuth setup
 4. **No payment processing** - Stripe not configured
 
@@ -210,7 +210,7 @@ Your plan ("5 free checks → paywall") is a **digital entitlement**. Apple will
 ### What's Working ✅
 - Beautiful, professional landing page
 - Scanner modal with text/image upload
-- **Real AI scam detection (Claude 3.5 Sonnet via OpenRouter)** ✅
+- **Real AI scam detection (Gemini 2.0 Flash via OpenRouter)** ✅
 - **Known contact detection** - reduces false positives for messages from saved contacts
 - Full auth backend (NextAuth + Vercel KV)
 - Full payment backend (Stripe checkout + webhooks)
@@ -968,6 +968,72 @@ Branch: ux-v2-elderly (pushed to origin)
 - ✅ High Contrast toggle works in Settings
 - ✅ Trust badges fit on screen with tighter spacing
 - ✅ All content visible above home indicator
+
+### December 18, 2025 - Elderly UX Simplification
+
+#### Problem Identified
+- "Paste from Clipboard" uses technical jargon elderly users don't understand
+- "Or type it here" with editable text field is unnecessary - elderly users will never manually type a suspicious message
+- Too many UI elements competing for attention
+
+#### Changes Made
+
+**Button Text Simplified:**
+| Before | After |
+|--------|-------|
+| "Paste from Clipboard" | "Paste the Message" |
+
+**Removed Unnecessary Elements:**
+- ❌ "Or type it here" divider - removed entirely
+- ❌ Editable TextEditor - replaced with read-only preview
+- ❌ Character counter - not needed for read-only display
+- ❌ Small "Paste" chip inside text area - redundant
+
+**New Simplified Flow:**
+```
+┌─────────────────────────────────────────┐
+│  🦉 Scam Shield                         │
+│                                         │
+│  HOW TO CHECK A MESSAGE:                │
+│  1️⃣ Hold your finger on the message    │
+│  2️⃣ Tap "Copy" when menu appears       │
+│  3️⃣ Come back here and tap Paste       │
+│                                         │
+│  ┌───────────────────────────────────┐  │
+│  │  📋 Paste the Message             │  │
+│  └───────────────────────────────────┘  │
+│                                         │
+│  Message to check:                      │
+│  ┌───────────────────────────────────┐  │
+│  │  Your message will appear here... │  │
+│  └───────────────────────────────────┘  │
+│                                         │
+│  (Check Message button appears after    │
+│   pasting)                              │
+│                                         │
+│  🔒 Checked securely  ⊗ No ads ever    │
+│  ✋ We never text back 👁 Privacy-first │
+└─────────────────────────────────────────┘
+```
+
+**Files Modified:**
+- `ScamShield/Features/Scan/Views/ScanView.swift`
+  - Renamed "Paste from Clipboard" → "Paste the Message"
+  - Removed `orTypeBelowDivider` view
+  - Removed `messageInputSection` (editable TextEditor)
+  - Added `messagePreviewBox` (read-only, always visible)
+  - Shows placeholder "Your message will appear here..." when empty
+  - Shows "Clear" button only when message is pasted
+  - Check Message button only appears after paste
+  - Removed unused `@FocusState` variable
+  - Updated accessibility labels/hints
+
+**UX Improvements:**
+- Fewer elements = less cognitive load
+- Read-only text box = no accidental editing
+- "Paste the Message" = action-oriented, no jargon
+- Message preview always visible = user knows where text will go
+- Check Message only appears when relevant
 
 ---
 
