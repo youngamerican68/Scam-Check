@@ -3,7 +3,7 @@
 **Project:** Scam Shield (The Granny Guard)
 **Goal:** $50-150 MRR in 60 days (10-30 paying families)
 **Timeline:** 2-week MVP sprint
-**Last Updated:** December 15, 2025
+**Last Updated:** December 21, 2025
 
 ---
 
@@ -1034,6 +1034,107 @@ Branch: ux-v2-elderly (pushed to origin)
 - "Paste the Message" = action-oriented, no jargon
 - Message preview always visible = user knows where text will go
 - Check Message only appears when relevant
+
+---
+
+### December 21, 2025 - Vintage Owl Mascot Redesign
+
+#### Problem Identified
+- Original owl mascot was too ominous/intimidating for elderly users
+- Dark, realistic style with piercing orange eyes felt judgmental and scary
+- "Predator watching you" vibe instead of "friendly helper"
+
+#### Design Direction
+Shifted from modern/ominous to **vintage/friendly** aesthetic:
+
+| Original Owl | New Vintage Owl |
+|--------------|-----------------|
+| Realistic, detailed feathers | Screen print/risograph texture |
+| Intense piercing eyes | Calm, attentive eyes with glasses |
+| Dark navy background | Warm cream/brown palette |
+| Intimidating/serious | Wise librarian energy |
+| "I'm watching you" | "Let me help you understand" |
+
+#### Image Generation Process
+Used iterative AI image generation prompts to find the right balance:
+
+**Final Prompt (Variation 1 - Calm & Centered):**
+```
+Friendly wise owl mascot, vintage 1950s children's book illustration style,
+wearing round reading glasses, calm gentle expression with soft relaxed
+half-lidded eyes, warm knowing smile, slight head tilt, warm brown cream
+and sepia color palette, old textured paper print aesthetic, centered
+symmetrical composition suitable for circular app icon, cozy approachable
+grandparent energy, simple clean background, trustworthy helper character
+```
+
+**Key Design Elements:**
+- Square reading glasses (relatable for elderly users)
+- Vintage screen print texture
+- Warm brown/cream palette
+- Attentive but not intense expression
+- "Ready to help" energy
+
+#### Assets Updated
+- `Assets.xcassets/Mascot/owl-logo.imageset/owl-logo.png` - New vintage owl
+- `Assets.xcassets/LaunchLogo.imageset/launch-logo.png` - Copied same image
+
+#### Cache Clearing Required
+iOS aggressively caches launch screens. Required steps:
+1. Clear Xcode derived data: `rm -rf ~/Library/Developer/Xcode/DerivedData/ScamShield-*`
+2. Reset simulator: `xcrun simctl shutdown booted && xcrun simctl erase [UDID]`
+3. Rebuild app
+
+#### Pending
+- Generate mood variants in vintage style (safe, warning, danger, scanning)
+- Update `owl-default.png` with vintage owl
+- Consider updating color scheme to match warm owl palette
+
+---
+
+### December 21, 2025 (Evening) - Animated Owl Implementation
+
+#### Animation Source
+Used Midjourney video generation to create a subtle blink animation for the vintage owl mascot.
+
+#### Technical Implementation
+
+**Frame Extraction:**
+- Source: Midjourney-generated MP4 video (5 seconds, 24fps)
+- Extracted 31 frames at 6fps using ffmpeg
+- PNG format to preserve vintage texture quality (GIF would cause color banding)
+
+**Files Created:**
+- `ScamShield/OwlAnimation/owl-frame-01.png` through `owl-frame-31.png`
+- `ScamShield/Design/Components/AnimatedOwlView.swift` - SwiftUI animation component
+
+**AnimatedOwlView Component:**
+```swift
+- Preloads all 31 frames into memory on appear
+- Cycles through frames at 6fps for smooth animation
+- Falls back to static LaunchLogo if frames can't be loaded
+- Stops animation when view disappears (memory management)
+```
+
+**Integration:**
+- Replaced static `Image("LaunchLogo")` with `AnimatedOwlView(size: 160)` in `ScanView.swift` header
+- Launch screen remains static (iOS storyboard limitation)
+- Main screen shows animated owl - feels alive and friendly
+
+#### Animation Behavior
+- Subtle blink animation (eyes close briefly)
+- Slight head/eye movement
+- Loops continuously
+- Non-distracting, adds personality without overwhelming
+
+#### UX Decision
+- **Main screen:** Animated owl (where users spend time, builds trust)
+- **Launch screen:** Static owl (brief display, iOS limitation)
+- Animation gives the owl personality without being overdone
+
+#### Build Issues Resolved
+- "Multiple commands produce" error: Duplicate OwlAnimation folders in project
+- Fixed by removing duplicate Resources/OwlAnimation reference
 
 ---
 
