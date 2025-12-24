@@ -3,7 +3,7 @@
 **Project:** Scam Shield (The Granny Guard)
 **Goal:** $50-150 MRR in 60 days (10-30 paying families)
 **Timeline:** 2-week MVP sprint
-**Last Updated:** December 21, 2025
+**Last Updated:** December 23, 2025
 
 ---
 
@@ -1135,6 +1135,78 @@ Used Midjourney video generation to create a subtle blink animation for the vint
 #### Build Issues Resolved
 - "Multiple commands produce" error: Duplicate OwlAnimation folders in project
 - Fixed by removing duplicate Resources/OwlAnimation reference
+
+---
+
+### December 23, 2025 - Email Mode Tab & UX Refinements
+
+#### Branch: `experiment/tabbed-email-ux`
+
+#### Email Mode UI - COMPLETE ✅
+Added Text/Email mode toggle with full Email scanning workflow:
+
+**Custom Tab Control:**
+- Custom-designed tab switcher (not default iOS segmented picker)
+- Icon + text for each tab (💬 Text, ✉️ Email)
+- Gold/sunrise background when selected
+- Navy blue background when unselected
+- Subtle border outline for definition
+
+**Email Mode Sections:**
+1. **ONE-TIME SETUP** - Save "Scam Shield" contact for easy forwarding
+   - Big gold "Add Scam Shield to Contacts" button
+   - Changes to checkmark when complete
+
+2. **EVERY TIME** - 3-step instructions:
+   - In your email, tap Forward
+   - In "To:", start typing "Scam Shield" (autocompletes from contacts)
+   - Tap Send, then come back here
+
+3. **STATUS** - Shows latest email scan result or "Waiting for your email..."
+   - "Check for Results" button to refresh
+
+4. **Backup Address** - Copy email address manually if needed
+
+**Files Created:**
+- `ScamShield/Features/Scan/ViewModels/EmailModeViewModel.swift` - Contact saving, scan fetching
+
+**Files Modified:**
+- `ScanView.swift` - Added CheckMode enum, mode toggle, emailModeContent
+- `GlassCard.swift` - Changed to blue-tinted background (navyLight) to match nocturne theme
+- `ScamCheckModels.swift` - Added title/subtitle fields to ScanHistoryItem
+
+#### Clipboard Flow Simplified - COMPLETE ✅
+Fixed clipboard UX to be less jarring for elderly users:
+
+**Before:** Allow Paste → Auto-scan immediately (too fast, confusing)
+**After:** Allow Paste → Text appears in preview box → User taps "Check This Message"
+
+**Flow:**
+1. User copies message
+2. Returns to app
+3. iOS shows "Allow Paste" dialog
+4. User taps "Allow Paste"
+5. Message appears in text preview box
+6. User sees their message, taps "Check This Message" when ready
+
+**Why:** Gives elderly users time to see what they're about to scan. Auto-scan was jarring and didn't let them confirm the content.
+
+#### Color Scheme Fixes
+- Tab control: Gold (sunrise) selected state, Navy (navyLight) unselected
+- GlassCard: Blue-tinted (navyLight at 60%) instead of grey/white
+- Border: Cloud color at 12% opacity for subtle definition
+
+#### Git Commit
+```
+37b2686 Add Email mode with custom tab control and improved clipboard UX
+```
+
+**Summary of Changes:**
+- 6 files changed, 916 insertions, 56 deletions
+- New EmailModeViewModel for email scanning workflow
+- Custom tab control matching app brand
+- Blue-tinted glass cards matching nocturne theme
+- Gentler clipboard flow (no auto-scan)
 
 ---
 
