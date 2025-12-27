@@ -3,7 +3,7 @@
 **Project:** Scam Shield (The Granny Guard)
 **Goal:** $50-150 MRR in 60 days (10-30 paying families)
 **Timeline:** 2-week MVP sprint
-**Last Updated:** December 23, 2025
+**Last Updated:** December 26, 2025
 
 ---
 
@@ -1207,6 +1207,111 @@ Fixed clipboard UX to be less jarring for elderly users:
 - Custom tab control matching app brand
 - Blue-tinted glass cards matching nocturne theme
 - Gentler clipboard flow (no auto-scan)
+
+---
+
+### December 26, 2025 - Comprehensive UX Overhaul (Version 4)
+
+#### Branch: `4-elderly-ux`
+
+#### Text Tab Overhaul - COMPLETE ✅
+
+**Removed Auto-Paste Behavior:**
+- No longer auto-reads clipboard on view appear or scene phase changes
+- Clipboard reading is now 100% user-initiated via "Paste Message" button
+- Prevents jarring/confusing auto-scan for elderly users
+
+**State-Based UI:**
+| State | Primary CTA | Secondary |
+|-------|-------------|-----------|
+| Empty (no text) | "Paste Message" (gold/filled) | "How it Works" card |
+| Has text | "Check Message" (gold/filled) | "Clear" (text-only) |
+
+**Updated Instructions:**
+```
+HOW IT WORKS
+1️⃣ Copy the suspicious message
+2️⃣ Come back to Scam Shield and tap 'Paste Message'
+
+If your iPhone asks permission to paste, tap Allow.
+```
+- Removed "above" (layout changes with Dynamic Type)
+- Clarified that "Allow Paste" is an iOS dialog, not an in-app button
+
+#### Email Tab Overhaul - COMPLETE ✅
+
+**Deferred Error Display:**
+- Contacts permission errors only shown AFTER user taps "Add to Contacts" button
+- Prevents scary error messages on first visit
+- Added `contactSetupAttempted` state to track if user has tried setup
+
+**Permission Recovery UI:**
+When contacts access is denied:
+```
+┌────────────────────────────────────────────────┐
+│ ⚠️ Contacts access is off                       │
+│                                                 │
+│ ┌─────────────────────────────────────────────┐│
+│ │  ⚙️ Open Settings                           ││
+│ └─────────────────────────────────────────────┘│
+│                                                 │
+│ Prefer not to use Contacts?                    │
+│ u_k9Xm2pL8nQ@scamshield.app         [Copy]    │
+└────────────────────────────────────────────────┘
+```
+- "Open Settings" button takes user directly to app settings
+- Fallback option to copy scan address manually
+
+**State-Based Layout:**
+| State | Layout Order |
+|-------|-------------|
+| Setup not done | ONE-TIME SETUP → EVERY TIME steps → compact STATUS |
+| Setup done | STATUS (with primary button) → collapsed steps |
+
+#### One-Primary-Button Rule - ENFORCED ✅
+
+Only one filled/gold button visible at any time:
+
+| Screen State | Primary Button |
+|-------------|----------------|
+| Text tab empty | "Paste Message" |
+| Text tab has content | "Check Message" |
+| Email tab setup needed | "Add Scam Shield to Contacts" |
+| Email tab setup done | "Check for Results" |
+
+All other buttons are secondary (text-only, outlined, or icon-only).
+
+#### Code Cleanup
+
+**Removed Old Clipboard Functions:**
+- `checkClipboardAvailability()` - no longer used
+- `looksLikeScannableContent()` - no longer used
+- `scanFromClipboard()` - no longer used
+
+**Removed Unused State Variables:**
+- `showClipboardBanner`
+- `clipboardBannerState`
+- `lastHandledChangeCount`
+- `lastDismissedChangeCount`
+
+**Simplified Paste Button:**
+- Removed duplicate PasteButton (iOS system button)
+- Kept single custom-styled button for consistent visual design
+
+#### Files Modified
+- `ScamShield/Features /Scan/Views/ScanView.swift` - 270 insertions, 315 deletions
+
+#### Git Commit
+```
+26b01f2 Comprehensive UX overhaul for Text and Email tabs
+```
+
+#### Key UX Principles Applied
+1. **User-initiated actions only** - No auto-paste, no auto-scan
+2. **One clear CTA** - Never show two competing primary buttons
+3. **Deferred errors** - Don't show errors until user has tried the action
+4. **Recovery paths** - Always provide a way forward (Settings, manual copy)
+5. **Clear instructions** - Explain what iOS will do ("iPhone asks permission")
 
 ---
 
