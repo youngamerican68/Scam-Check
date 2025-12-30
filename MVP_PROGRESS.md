@@ -3,7 +3,7 @@
 **Project:** Scam Shield (The Granny Guard)
 **Goal:** $50-150 MRR in 60 days (10-30 paying families)
 **Timeline:** 2-week MVP sprint
-**Last Updated:** December 26, 2025
+**Last Updated:** December 30, 2025
 
 ---
 
@@ -1312,6 +1312,65 @@ All other buttons are secondary (text-only, outlined, or icon-only).
 3. **Deferred errors** - Don't show errors until user has tried the action
 4. **Recovery paths** - Always provide a way forward (Settings, manual copy)
 5. **Clear instructions** - Explain what iOS will do ("iPhone asks permission")
+
+---
+
+### December 30, 2025 - Screenshot Input Feature
+
+#### Screenshot Input - COMPLETE ✅
+
+Added screenshot selection as an alternative input method alongside paste, matching competitor apps like "Scam Scan".
+
+**Files Created:**
+- `ScamShield/Components /ImagePickerView.swift` - PHPickerViewController wrapper
+
+**Files Modified:**
+- `ScamShield/Features /Scan/ViewModels/ScanViewModel.swift` - Image state and base64 conversion
+- `ScamShield/Features /Scan/Views/ScanView.swift` - Screenshot button and image preview UI
+
+**Technical Implementation:**
+- **PHPickerViewController** - No permissions required for photo selection
+- **Base64 conversion** - Images compressed to max 1MB for API
+- **Thumbnail generation** - Preview images resized for display
+- **Dual input support** - Can scan with text, image, or both
+
+**UI Changes:**
+```
+┌─────────────────┐  ┌─────────────────┐
+│   📷            │  │   📋            │
+│  Screenshot     │  │    Paste        │
+└─────────────────┘  └─────────────────┘
+
+HOW IT WORKS
+📷 Tap Screenshot to select a screenshot from your photos
+                    — or —
+📋 In Messages: hold message → Copy → come back and tap Paste
+```
+
+**Image Preview Box:**
+- Shows selected image thumbnail (max 200pt height)
+- "Remove" button to clear selection
+- Option to "Also paste message text" for combined input
+
+#### Trust Indicator Update - COMPLETE ✅
+
+Changed misleading "Privacy-first" claim to honest "No data sold":
+
+| Before | After |
+|--------|-------|
+| Privacy-first | No data sold |
+
+**Rationale:** App uses cloud-based AI (OpenRouter), so "privacy-first" overpromises. "No data sold" is accurate and addresses user concerns.
+
+#### Git Commits
+```
+a8627f2 Add screenshot input feature alongside paste option
+847d7d6 Improve paste instructions with step-by-step guidance
+b961618 Change "Privacy-first" to "No data sold" for honesty
+```
+
+#### Branch
+`feature/screenshot-input` - Ready to merge
 
 ---
 
